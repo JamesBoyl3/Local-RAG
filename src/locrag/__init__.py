@@ -1,2 +1,4 @@
-def main() -> None:
-    print("Hello from locrag!")
+
+from localrag.services.rag_model import RAGModel
+
+ 

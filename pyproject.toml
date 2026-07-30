@@ -1,0 +1,17 @@
+[project]
+name = "locrag"
+version = "0.1.0"
+description = "A Project for creating local RAG Applications"
+readme = "README.md"
+authors = [
+    { name = "JamesBoyl3", email = "jimphilipboyle@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+locrag = "locrag:main"
+
+[build-system]
+requires = ["uv_build>=0.12.0,<0.13.0"]
+build-backend = "uv_build"

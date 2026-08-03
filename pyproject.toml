@@ -7,7 +7,21 @@ authors = [
     { name = "JamesBoyl3", email = "jimphilipboyle@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "beautifulsoup4>=4.15.0",
+    "dotenv>=0.9.9",
+    "faiss-cpu>=1.14.3",
+    "fastapi>=0.141.1",
+    "langchain-text-splitters>=1.1.2",
+    "llama-cpp-python>=0.3.34",
+    "logging>=0.4.9.6",
+    "numpy>=2.5.1",
+    "pathlib>=1.0.1",
+    "pydantic-settings>=2.14.2",
+    "pymupdf>=1.28.0",
+    "requests>=2.34.2",
+    "sentence-transformers>=5.6.1",
+]
 
 [project.scripts]
 locrag = "locrag:main"
@@ -15,3 +29,7 @@ locrag = "locrag:main"
 [build-system]
 requires = ["uv_build>=0.12.0,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "locrag"
+module-root = "."

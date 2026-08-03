@@ -9,6 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Sensitive Info
+.env
+
 # Data stores
 *.db
 *.json

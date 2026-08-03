@@ -1,5 +1,5 @@
 
-from abc import ABC, abstracmethod
+from abc import ABC, abstractmethod
 
 
 class VectorDB(ABC):

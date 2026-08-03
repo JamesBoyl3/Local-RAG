@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -6,7 +7,9 @@ class Settings(BaseSettings):
 			env_file=".env"
 			)
 	
-	RAG_API_URL: str
+	GEN_MODEL_LOC: Path
+	HF_EMBEDDING_MODEL_LOC: Path
+	LOC_EMBEDDING_MODEL_LOC: Path
 
 
 settings = Settings()

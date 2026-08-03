@@ -1,15 +1,21 @@
-from localrag.ingestion.Embeddings import EmbeddingModel
-from localrag.ingestion.Processors import PDFProcessor
+from locrag.ingestion.Embeddings import EmbeddingModel
+from locrag.ingestion.Processors import PDFProcessor
+from locrag.core import DocumentChunk
+
+
+from pathlib import Path
+from typing import Self
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class IngestionPipeline:
 	def __init__(self, embeddingModel: EmbeddingModel) -> None:
 		self.embeddingModel = embeddingModel
 
 	@classmethod
-	def create(cls, model_loc: str|Path) -> self:
+	def create(cls, model_loc: str|Path) -> Self:
 		embeddingModel = EmbeddingModel(model_loc)
 		
 		return cls(
@@ -17,7 +23,8 @@ class IngestionPipeline:
 			)
 
 	def embed(self, content: str) -> None:
-		logger.info(embedding := self.embeddingModel.embed(content))
+		logger.info(f"Embedded {content[:50]}")
+		embedding = self.embeddingModel.embed(content)
 		return embedding
 
 	

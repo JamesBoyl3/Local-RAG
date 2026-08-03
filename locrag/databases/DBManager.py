@@ -16,9 +16,9 @@ class DBManager:
 			doc_ids = db.add_documents(docs)
 			self._vector_db.add_documents(docs, doc_ids)
 
-	def get_documents_by_search(self, query_vector: np.ndarray) -> list[DocumentChunk]
+	def get_documents_by_search(self, query_vector: np.ndarray) -> list[DocumentChunk]:
 		with self._doc_db as db:
-			doc_ids = self._vector_db.search(query)
-			docs = db.get_documents_by_id(doc_ids)
+			doc_ids = self._vector_db.search(query_vector)
+			docs = db.get_documents_by_ids(doc_ids)
 
 		return docs

@@ -1,1 +1,1 @@
-from localrag.ingestion.textProcessors import PDFProcessor
+from .textProcessors import PDFProcessor

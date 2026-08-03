@@ -1,1 +1,1 @@
-from embeddingModel import EmbeddingModel
+from locrag.ingestion.Embeddings.embeddingModel import EmbeddingModel

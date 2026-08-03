@@ -30,7 +30,7 @@ def create_conversation() -> list[dict[str, str]]:
 class Conversation:
 	messages: list[dict[str, str]] = field(default_factory=create_conversation)
 
- 	def add_message(self, role: str, content: str) -> None:
+	def add_message(self, role: str, content: str) -> None:
 		self.messages.append(
     				{
                 			"role": role,

@@ -2,15 +2,16 @@
 from locrag.core import DocumentChunk
 
 from abc import ABC, abstractmethod
+from typing import Self
 
-class DocumentDB(ABC)
+class DocumentDB(ABC):
 	def __init__(self) -> None:
 		...
 
-	def __enter__(self) -> self:
+	def __enter__(self) -> Self:
 		return self
 
-	def __exit__(self, *args) -> None
+	def __exit__(self, *args) -> None:
 		return 
 	
 	@abstractmethod

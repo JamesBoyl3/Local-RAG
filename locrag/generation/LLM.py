@@ -4,12 +4,12 @@ from llama_cpp import Llama
 from pathlib import Path
 
 import logging
-logger = logging.get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 class LLM:
-	def __init__(self, model_loc: Path, *, sys_prompt: str|None=None, nct_x: int=2048, n_threads: int=4) -> None:
+	def __init__(self, model_loc: Path, *, sys_prompt: str|None=None, n_ctx: int=2048, n_threads: int=4) -> None:
 		self._model = Llama(
-				model_path=str(model_loc)
+				model_path=str(model_loc),
 				n_ctx=n_ctx,
 				n_threads=n_threads)
 		
@@ -29,5 +29,5 @@ class LLM:
 			response["usage"]["completion_tokens"]
 			)
 
-		return response
+		return response["choices"][0]["message"]["content"]
 

@@ -2,7 +2,7 @@
 from locrag.databases import DBManager, SQLManager, FAISSManager
 from locrag.generation import LLM
 from locrag.ingestion import IngestionPipeline, EmbeddingModel
-from locrag.core import Conversation
+from locrag.core import Conversation, DocumentChunk
 
 from pathlib import Path
 from typing import Self
@@ -20,7 +20,7 @@ class RAGModel:
 	def create(cls, gen_model_loc: str|Path, embedding_model_loc: str|Path,  doc_db_loc: str|Path=Path("./documents.db"), vector_db_loc: str|Path=Path("./embedding.faiss")) -> Self:
 		llm = LLM(Path(gen_model_loc))
 		doc_db = SQLManager(Path(doc_db_loc))
-		vector_db = FAISSManager(Path(vector_db_loc))
+		vector_db = FAISSManager(index_path=Path(vector_db_loc))
 		ingestion_pipeline = IngestionPipeline(EmbeddingModel(Path(embedding_model_loc)))
 
 		return cls(
@@ -51,14 +51,15 @@ class RAGModel:
 
 	def generate_response(self, query: str) -> str:
 		query_vector = self._ingestion_pipeline.embed(query)
-		relevant_doc_ids = self._db_manager.get_documents_by_search(query_vector)
+		relevant_docs = self._db_manager.get_documents_by_search(query_vector)
 		
-		relevant_docs = self._db_manager.get_documents_by_ids(relevant_doc_ids)
-
 		messages = self._conversation.messages.copy()
 		messages.append(self._build_prompt(query, relevant_docs))
 		
-		self.conversation.add_message("user", query)
+		self._conversation.add_message("user", query)
 		self._conversation.add_message("assistant", answer := self._llm.answer(messages))
 
 		return answer
+
+	def save_embedding_model(self, new_loc: str|Path) -> None:
+		self._ingestion_pipeline.embeddingModel.save_model(new_loc)

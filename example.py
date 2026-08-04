@@ -27,4 +27,4 @@ if __name__ == "__main__":
 			assistant.ingest_src(arguments[0])
 
 		else: 
-			print(assistant.generate_response(" ".join(arguments)))
+			print(assistant.generate_response(query))

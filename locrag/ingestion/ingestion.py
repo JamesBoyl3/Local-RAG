@@ -28,10 +28,10 @@ class IngestionPipeline:
 		return embedding
 
 	
-	def process_doc(self, url: str) -> list[DocumentChunk]:
+	def process_doc(self, url: str|Path) -> list[DocumentChunk]:
 		logger.info(f"Doc processed at {url}")
 
 		if url.endswith(".pdf"):
-			docs = PDFProcessor.process(url)
+			docs = PDFProcessor().process(url)
 
 		return docs

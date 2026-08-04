@@ -16,7 +16,7 @@ class FAISSManager:
 
 	def __init__(self, dimension: int=384, index_path: str|None=None) -> None:
 		self.dimension = dimension
-		self.index_path = index_path or "embeddings.faiss"
+		self.index_path = str(index_path) or "embeddings.faiss"
 		self.index = self._load_or_create_index()
 
 	def _load_or_create_index(self) -> faiss.IndexIDMap:
@@ -32,8 +32,8 @@ class FAISSManager:
 
 	def add_documents(self, docs: list[DocumentChunk], ids: list[int] | None = None) -> None:
 		embeddings = [doc.embedding for doc in docs]
-		vector_ids = ids if ids is not None else list(range(len(texts)))
-		self.index.add_with_ids(vectors, np.array(vector_ids, dtype=np.int64))
+		embedding_ids = ids if ids is not None else list(range(len(texts)))
+		self.index.add_with_ids(np.array(embeddings, dtype=np.float32), np.array(embedding_ids, dtype=np.int64))
 		faiss.write_index(self.index, self.index_path)
 
 	def search(self, query_vector: np.ndarray, top_k: int=4) -> np.ndarray:

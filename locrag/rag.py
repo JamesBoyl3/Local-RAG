@@ -41,7 +41,7 @@ class RAGModel:
 		return context
 
 	def ingest_src(self, src: str | Path) -> None:
-		docs = self._ingestion_pipeline.process(src)
+		docs = self._ingestion_pipeline.process_doc(src)
 		
 		for doc in docs:
 			doc.embedding = self._ingestion_pipeline.embed(doc.content)

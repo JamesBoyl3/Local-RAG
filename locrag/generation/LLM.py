@@ -11,7 +11,8 @@ class LLM:
 		self._model = Llama(
 				model_path=str(model_loc),
 				n_ctx=n_ctx,
-				n_threads=n_threads)
+				n_threads=n_threads,
+				verbose=False)
 		
 		self._sys_prompt = {
 				"role": "system",
@@ -19,6 +20,7 @@ class LLM:
 				}
 
 	def answer(self, conversation: list[dict[str, str]], max_tokens: int=1024, temp: float=0.7) -> str:
+		logger.info(conversation)
 		response = self._model.create_chat_completion(
 				messages=conversation,
 				max_tokens=max_tokens,

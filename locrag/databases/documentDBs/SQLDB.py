@@ -58,7 +58,7 @@ class SQLManager(DocumentDB):
 	def add_document(self, doc: DocumentChunk) -> int:
 		self.cursor.execute(
 				"""
-				INSERT INTO documents (url, content, page) VALUES (?, ?, ?)
+				INSERT INTO documents (src, content, page) VALUES (?, ?, ?)
 				""",
 				(doc.src, doc.content, doc.page_no),
 				)

@@ -4,6 +4,7 @@ from locrag.core import DocumentChunk
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 import fitz
 import requests
@@ -22,22 +23,26 @@ class TextProcessor(ABC):
 
 
 class PDFProcessor(TextProcessor): 
-	def _download_doc(self) -> requests.Response:
-		response = requests.get(self.url, timeout=30)
+	@staticmethod
+	def _download_pdf(url: str|Path) -> requests.Response:
+		response = requests.get(url, timeout=30)
 		response.raise_for_status()
 		return response
 
-	def _get_pages(self, pdf: fitz.Document) -> list[tuple[int, fitz.Page]]:
+	@staticmethod
+	def _get_pages(pdf: fitz.Document) -> list[tuple[int, fitz.Page]]:
 		return [(index, pdf.load_page(index)) for index in range(pdf.page_count)]
 
-	def _get_text(self, page: fitz.Page) -> str:
+	@staticmethod
+	def _get_text(page: fitz.Page) -> str:
 		return page.get_text()
 
-	def _chunk_text(self, content: str) -> list[str]:
+	@staticmethod
+	def _chunk_text(content: str) -> list[str]:
 		splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 		return splitter.split_text(content)
 
-	def process(self, url: str) -> list[DocumentChunk]:
+	def process(self, url: str|Path) -> list[DocumentChunk]:
 		pdf = fitz.open(stream=self._download_pdf(url).content, filetype="pdf")
 		pages = self._get_pages(pdf)
 		texts = [self._get_text(page) for _, page in pages]

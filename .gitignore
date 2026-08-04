@@ -16,3 +16,6 @@ wheels/
 # Data stores
 *.db
 *.json
+*.db
+*.faiss
+*.sql

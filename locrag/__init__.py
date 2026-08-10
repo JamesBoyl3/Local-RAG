@@ -1,12 +1,8 @@
+# from locrag.services.rag_model import RAGModel
 
-#from locrag.services.rag_model import RAGModel
+from .core import settings, configure_logger
+from .rag import RAGModel
+from .generation import LLM
+from .ingestion import IngestionPipeline, EmbeddingModel
+from .databases import DBManager, SQLManager, FAISSManager
 
-from locrag.core import Settings, configure_logger
-from locrag.rag import RAGModel
-from locrag.generation import LLM
-from locrag.ingestion import IngestionPipeline, EmbeddingModel
-from locrag.databases import DBManager, SQLManager, FAISSManager
-
-
-settings = Settings()
- 

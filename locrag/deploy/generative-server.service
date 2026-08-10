@@ -1,0 +1,17 @@
+[Unit]
+Description=llama.cpp generation server for localRAG
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/localrag/llama.cpp/llama-server \
+    -m /opt/localrag/models/qwen2.5-3b-instruct-q4_0.gguf \
+    --host 127.0.0.1 \
+    --port 8080 \
+    -ngl 35
+Restart=on-failure
+RestartSec=5
+User=localrag
+
+[Install]
+WantedBy=multi-user.target

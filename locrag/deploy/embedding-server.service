@@ -1,0 +1,18 @@
+[Unit]
+Description=llama.cpp embedding server for localRAG
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/opt/localrag/llama.cpp/llama-server \
+    -m /opt/localrag/models/your-embedding-model.gguf \
+    --host 127.0.0.1 \
+    --port 8081 \
+    --embedding \
+    -ngl 35
+Restart=on-failure
+RestartSec=5
+User=localrag
+
+[Install]
+WantedBy=multi-user.target

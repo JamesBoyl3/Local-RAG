@@ -1,0 +1,16 @@
+[Unit]
+Description=Local RAG API Server
+After=network.target generative-server.service embedding-server.service
+Wants=generative-server.service embedding-server.service
+
+[Service]
+Type=simple
+User=localrag
+WorkingDirectory=/opt/localrag
+Environment="PATH=/opt/localrag/.venv/bin"
+ExecStart=/opt/localrag/.venv/bin/uvicorn localrag.server:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

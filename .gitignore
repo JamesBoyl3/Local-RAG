@@ -14,7 +14,7 @@ wheels/
 opt/
 
 # Sensitive Info
-.env
+*.env
 
 # Data stores
 *.db
@@ -22,3 +22,6 @@ opt/
 *.db
 *.faiss
 *.sql
+
+#Ai Assistant
+.kilo

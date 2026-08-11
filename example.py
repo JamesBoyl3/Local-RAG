@@ -1,27 +1,19 @@
-from locrag import settings, configure_logger, RAGModel
+from localrag import settings, configure_logger, RAGModel
 
-import os
 import logging
 
 if __name__ == "__main__":
     configure_logger(logging.DEBUG)
-    print(
-        f"{settings.GEN_MODEL_LOC=}\n{settings.HF_EMBEDDING_MODEL_LOC}\n{settings.LOC_EMBEDDING_MODEL_LOC}"
-    )
+    print(f"{settings.GEN_MODEL_PATH=}\n{settings.EMBED_MODEL_PATH}")
 
-    if os.path.exists(settings.LOC_EMBEDDING_MODEL_LOC):
-        assistant = RAGModel.create(
-            settings.GEN_MODEL_LOC, settings.LOC_EMBEDDING_MODEL_LOC
-        )
-    else:
-        assistant = RAGModel.create(
-            settings.GEN_MODEL_LOC, settings.HF_EMBEDDING_MODEL_LOC
-        )
-        assistant.save_embedding_model(settings.LOC_EMBEDDING_MODEL_LOC)
+    assistant = RAGModel.create(
+        settings.GEN_MODEL_PATH,
+        dimension=384,
+    )
 
     print("Entered RAG Application")
     while True:
-        query = input(">>")
+        query = input(">> ")
 
         if query == "q":
             break
@@ -33,4 +25,3 @@ if __name__ == "__main__":
 
         else:
             print(assistant.generate_response(query))
-

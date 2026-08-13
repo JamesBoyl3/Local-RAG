@@ -1,32 +1,110 @@
-# Local RAG AI Assistant (LocRAG)
+# Local RAG Assistant
+
+A local-first RAG (Retrieval-Augmented Generation) application for building fully offline document Q&A systems — a local, self-hosted alternative to services like delphi.ai.
+
+<!--
+Badges go here once there's something real to report, e.g.:
+![Tests](https://github.com/<user>/locrag/actions/workflows/tests.yml/badge.svg)
+![Coverage](https://codecov.io/gh/<user>/locrag/branch/main/graph/badge.svg)
+See https://shields.io/ for how these are generated.
+-->
 
 ---
 
-## Project Description
-This project aims to create an interface to aid in building fully local RAG applications (think of a RAG equivalent of ollama or a local version of delphi). 
+## Installation
+
+This project uses [uv](https://docs.astral.sh/uv/) as its build backend and package manager.
+
+```bash
+git clone https://github.com/JamesBoyl3/locrag.git
+cd locrag
+uv sync
+```
+
+If you don't have `uv` installed, see the [uv installation guide](https://docs.astral.sh/uv/getting-started/installation/).
 
 ---
 
-## Motivation
-In the past, I helped develop a RAG application using [delphi.ai](https://www.delphi.ai/) for a company to aid in searching through research papers. Whilst this solution was satisfying, it had some downsides. 
+## Setup
 
-You had no control over what delphi does with your data, meaning you could not use sensitive documents. Secondly it was subscription based, meaning you had constant expenditure to maintain the system. 
+LocRAG loads configuration from environment files at import/runtime. You'll need to create the following before running anything:
 
-This solution aims to fix these problems. By allowing a similar process to run locally, you can invest in hardware (gets rid of subscription concerns and privacy) and install this software. Now you have a local RAG application and can use it for any document you want. 
+| File | Used by | Required variables |
+|---|---|---|
+| `.env` | `localrag/core/config.py` | `LLAMA_SERVER_PATH`, `GEN_MODEL_PATH`, `EMBED_MODEL_PATH` |
+| `LLM.env` | `localrag/generation/config.py` | `TEMP`, `MAX_TOKENS`, `N_CTX` |
+| `localrag-server.env` | `localrag/deploy/server_settings.py` | `LLAMA_HOST`, `LLAMA_GEN_PORT`, `LLAMA_EMBED_PORT`, `LLAMA_EMBED_DIM` |
+
+You'll also need a local [llama.cpp](https://github.com/ggml-org/llama.cpp) build, plus a GGUF generative model and a GGUF embedding model on disk, since `GEN_MODEL_PATH` and `EMBED_MODEL_PATH` need to point at real files.
 
 ---
 
-## Used technologies 
-- llama.cpp (for LLM models and Embedding Models)
-- faiss (for storing and searching embeddings)
-- sqlite3 (for storing meta-data of each document for references)
-- fitz & langchain-text-splitters (for pdf processing)
-- BeutifualSoup and requests (for crawling the web for documents)
+## Quick start
+
+```python
+from localrag import settings, configure_logger, RAGModel
+
+import logging
+
+configure_logger(logging.DEBUG)
+
+assistant = RAGModel.create(
+    settings.GEN_MODEL_PATH,
+    dimension=384,  # must match your embedding model's output dimension
+)
+
+# ingest a document
+assistant.ingest_src("path/to/document.pdf")
+
+# ask a question
+print(assistant.generate_response("What is district heating?"))
+```
+
+See `example.py` in the repo root for a runnable CLI loop version of this.
+
+---
+
+## Running as an API
+
+The API also ships a [FastAPI](https://fastapi.tiangolo.com/) server (`localrag/server.py`):
+
+```bash
+uv run uvicorn localrag.server:app --host 127.0.0.1 --port 8000
+```
+
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/health` | GET | Reports whether the generative/embedding llama.cpp servers are reachable |
+| `/ingest` | POST | Ingest a document (`{"src": "path/or/url"}`) |
+| `/query` | POST | Ask a question, get a full response (`{"query": "..."}`) |
+| `/stream` | POST | Same as `/query` but streams tokens back |
+| `/history` | GET | Returns the current conversation history |
+
+---
+
+## Deployment
+
+Systemd unit files and a setup script for running the generative server, embedding server, and API server as background services are in [`localrag/deploy/`](./localrag/deploy/). Run `sudo localrag/deploy/llama-server-setup.sh` to install them.
+
+---
+
+## Used technologies
+
+See [`pyproject.toml`](./pyproject.toml) for the full, versioned dependency list. At a high level:
+- [llama.cpp](https://github.com/ggml-org/llama.cpp) — running the LLM and embedding models locally
+- [FAISS](https://github.com/facebookresearch/faiss) — vector storage and similarity search
+- SQLite (via the standard library) — document metadata storage
+- [PyMuPDF (fitz)](https://pymupdf.readthedocs.io/) + [langchain-text-splitters](https://python.langchain.com/docs/how_to/#text-splitters) — PDF parsing and chunking
+- [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/) + [Requests](https://requests.readthedocs.io/) — web page crawling
+- [FastAPI](https://fastapi.tiangolo.com/) — the HTTP API layer
 
 ---
 
 ### Short-term roadmap
-- [ ] Fix ongoing bugs for basic application
-- [ ] Introduce Multi-lingual models
-- [ ] Intoruce Multi-modal models (iamges, videos etc.)
-- [ ] Utilise faiss GPU capabilities
+- [ ] Utilise FAISS & llama_cpp.server GPU capabilities
+
+---
+
+## License
+
+This project is licensed under the [GNU GPLv3](./LICENSE).

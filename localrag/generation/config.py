@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class LLMSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file="LLM.env", env_prefix="LLM_")
+    model_config = SettingsConfigDict(env_file="LLM.env")
 
     TEMP: float
     MAX_TOKENS: int

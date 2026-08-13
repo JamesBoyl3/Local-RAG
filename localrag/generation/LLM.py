@@ -20,7 +20,7 @@ class LLM:
 
     def get_answer(self, conversation: list[dict[str, str]]) -> str:
         response = self._session.post(
-            f"{llama_server_settings.HOST_IP}:{llama_server_settings.LLAMA_GEN_PORT}/v1/chat/completions",
+            f"http://{llama_server_settings.LLAMA_HOST}:{llama_server_settings.LLAMA_GEN_PORT}/v1/chat/completions",
             json={
                 "messages": conversation,
                 "temperature": self.settings.TEMP,
@@ -39,7 +39,7 @@ class LLM:
         logger.info(conversation)
 
         with self._session.post(
-            f"{llama_server_settings.HOST_IP}:{llama_server_settings.LLAMA_GEN_PORT}/v1/chat/completions",
+            f"http://{llama_server_settings.LLAMA_HOST}:{llama_server_settings.LLAMA_GEN_PORT}/stream",
             json={
                 "messages": conversation,
                 "temperature": self.settings.TEMP,

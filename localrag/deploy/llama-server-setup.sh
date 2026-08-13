@@ -8,7 +8,7 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 UNITS=("generative-server.service" "embedding-server.service" "api-server.service")
-ENV_FILES=("localrag-generative.env" "localrag-embedding.env" "api-server.env")
+ENV_FILES=("localrag-server.env")
 
 mkdir -p /etc/default /opt/localrag/models
 

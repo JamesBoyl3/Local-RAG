@@ -4,11 +4,11 @@ After=network.target
 
 [Service]
 Type=simple
-EnvironmentFile=-/etc/default/localrag-generative
-ExecStart=/bin/bash -c 'exec "$LLAMA_CPP_BIN" -m "$LLAMA_MODEL_PATH" --host "$LLAMA_HOST" --port "$LLAMA_PORT" -ngl "$LLAMA_NGL"'
+EnvironmentFile=-/etc/default/localrag-server.env
+ExecStart=/bin/bash -c 'exec "$LLAMA_CPP_BIN" -m "$LLAMA_GEN_PATH" --host "$LLAMA_HOST" --port "$LLAMA_GEN_PORT"'
 Restart=on-failure
 RestartSec=5
-User=localrag
+User=jamesboyle
 
 [Install]
 WantedBy=multi-user.target

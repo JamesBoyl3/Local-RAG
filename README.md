@@ -27,13 +27,30 @@ If you don't have `uv` installed, see the [uv installation guide](https://docs.a
 
 ## Setup
 
-LocRAG loads configuration from environment files at import/runtime. You'll need to create the following before running anything:
+LocRAG loads configuration from an environment file at import/runtime (you can see configuration at [localrag/core/config.py](https://github.com/JamesBoyl3/Local-RAG/blob/master/localrag/core/config.py). You'll need to create the following before running anything:
 
-| File | Used by | Required variables |
-|---|---|---|
-| `.env` | `localrag/core/config.py` | `LLAMA_SERVER_PATH`, `GEN_MODEL_PATH`, `EMBED_MODEL_PATH` |
-| `LLM.env` | `localrag/generation/config.py` | `TEMP`, `MAX_TOKENS`, `N_CTX` |
-| `localrag-server.env` | `localrag/deploy/server_settings.py` | `LLAMA_HOST`, `LLAMA_GEN_PORT`, `LLAMA_EMBED_PORT`, `LLAMA_EMBED_DIM` |
+<table>
+  <tr>
+      <td>Enviroment File (NEEDED)</td>
+      <td>Specific Config</td>
+      <td>Variables</td>
+  </tr>
+  <tr>
+    <td rowspan="3">.env</td>
+    <td><code>LLMConfig</code></td>
+    <td><code>llm__TEMP</code>, <code>llm__MAX_TOKENS</code>, <code>llm__N_CTX</code></td>
+  </tr>
+  <tr>
+    <td><code>ServerConfig</code></td>
+    <td><code>server__HOST_IP</code>,<code>server__HOST_PORT</code></td>
+  </tr>
+    <tr>
+        <td><code>Settings</code></td>
+        <td><code>GEN_MODEL_PATH</code>, <code>EMBED_MODEL_PATH</code></td>
+    </tr>
+</table>
+
+**NOTE:** Some of the variables are not needed, as they have defaults. See [.env.example](https://github.com/JamesBoyl3/Local-RAG/blob/master/.env.example) for the bare minimum. 
 
 You'll also need a local [llama.cpp](https://github.com/ggml-org/llama.cpp) build, plus a GGUF generative model and a GGUF embedding model on disk, since `GEN_MODEL_PATH` and `EMBED_MODEL_PATH` need to point at real files.
 
@@ -101,6 +118,7 @@ See [`pyproject.toml`](./pyproject.toml) for the full, versioned dependency list
 ---
 
 ### Short-term roadmap
+- [ ] Get the Embedding Dimension Synamically (test response) 
 - [ ] Utilise FAISS & llama_cpp.server GPU capabilities
 
 ---

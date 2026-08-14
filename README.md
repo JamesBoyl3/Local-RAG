@@ -1,10 +1,9 @@
 # Local RAG Assistant
 
 A local-first RAG (Retrieval-Augmented Generation) application for building fully offline document Q&A systems — a local, self-hosted alternative to services like delphi.ai.
-
 <!--
 Badges go here once there's something real to report, e.g.:
-![Tests](https://github.com/<user>/locrag/actions/workflows/tests.yml/badge.svg)
+![Tests](https://github.com/JamesBoyl3/locrag/actions/workflows/tests.yml/badge.svg)
 ![Coverage](https://codecov.io/gh/<user>/locrag/branch/main/graph/badge.svg)
 See https://shields.io/ for how these are generated.
 -->

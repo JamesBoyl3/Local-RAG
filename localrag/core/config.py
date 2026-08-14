@@ -1,13 +1,30 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import BaseModel
 from pathlib import Path
 
 
-class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env")
+class LLMConfig(BaseModel):
+    TEMP: float = 0.2
+    MAX_TOKENS: int = 1024
+    N_CTX: int = 2048
 
-    LLAMA_SERVER_PATH: Path
-    GEN_MODEL_PATH: Path
-    EMBED_MODEL_PATH: Path
+
+class LLamaServerConfig(BaseModel):
+    LLAMA_BIN_PATH: str
+    GEN_GGUF_PATH: str
+    EMBED_GGUF_PATH: str
+    HOST_IP: str = "127.0.0.1"
+    GEN_PORT: int = 8080
+    EMBED_PORT: int = 8081
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_nested_delimiter="__", env_nested_max_split=1
+    )
+
+    llm: LLMConfig
+    llama_server: LLamaServerConfig
 
 
 settings = Settings()  # type: ignore[arg-calls]

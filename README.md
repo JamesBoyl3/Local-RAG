@@ -50,7 +50,7 @@ LocRAG loads configuration from an environment file at import/runtime (you can s
     </tr>
 </table>
 
-**NOTE:** Some of the variables are not needed, as they have defaults. See [.env.example](https://github.com/JamesBoyl3/Local-RAG/blob/master/.env.example) for the bare minimum. 
+**NOTE:** Some of the variables are not needed, as they have defaults. See [.env.example](https://github.com/JamesBoyl3/Local-RAG/blob/master/.env.example) for the bare minimum to setup a loopback system. 
 
 You'll also need a local [llama.cpp](https://github.com/ggml-org/llama.cpp) build, plus a GGUF generative model and a GGUF embedding model on disk, since `GEN_MODEL_PATH` and `EMBED_MODEL_PATH` need to point at real files.
 

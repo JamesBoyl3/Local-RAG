@@ -9,9 +9,12 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from localrag import RAGModel
-from localrag.deploy import llama_server_settings
-from localrag.core import configure_logger
-from localrag.core.llama_server import check_generative_server, check_embedding_server
+from localrag.core import configure_logger, settings
+from localrag.core.llama_server import (
+    check_generative_server,
+    check_embedding_server,
+    get_embedding_dim,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +42,12 @@ async def lifespan(app: FastAPI):
     configure_logger(logging.INFO)
 
     gen_ok = check_generative_server(
-        llama_server_settings.HOST_IP,
-        llama_server_settings.LLAMA_GEN_PORT,
+        settings.llama_server.HOST_IP,
+        settings.llama_server.GEN_PORT,
     )
     emb_ok = check_embedding_server(
-        llama_server_settings.HOST_IP,
-        llama_server_settings.LLAMA_EMBED_PORT,
+        settings.llama_server.HOST_IP,
+        settings.llama_server.EMBED_PORT,
     )
 
     if not gen_ok or not emb_ok:
@@ -55,7 +58,9 @@ async def lifespan(app: FastAPI):
 
     rag_model = RAGModel.create(
         gen_model_path=Path("./model.gguf"),
-        dimension=llama_server_settings.LLAMA_EMBED_DIM,
+        dimension=get_embedding_dim(
+            settings.llama_server.HOST_IP, settings.llama_server.EMBED_PORT
+        ),
     )
     logger.info("RAG model initialized")
 

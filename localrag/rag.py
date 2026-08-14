@@ -1,13 +1,18 @@
 from localrag.databases import DBManager, SQLManager, FAISSManager
-from localrag.generation import LLM, llmsettings
+from localrag.generation import LLM
 from localrag.ingestion import IngestionPipeline, EmbeddingModel
-from localrag.core import Conversation, DocumentChunk
+from localrag.core import Conversation, DocumentChunk, LLMConfig, LLamaServerConfig
+from localrag.core.llama_server import get_embedding_dim
 
 from pathlib import Path
 from typing import Generator, Self
 
 
 class RAGModel:
+    """
+    An orchestator class that manages the different constituents of a RAG system (LLM, embeddings, document store, vector store)
+    """
+
     def __init__(
         self,
         llm: LLM,
@@ -23,15 +28,29 @@ class RAGModel:
     @classmethod
     def create(
         cls,
-        gen_model_path: str | Path,
-        dimension: int,
+        llm_config: LLMConfig,
+        llama_server_config: LLamaServerConfig,
         doc_db_path: str | Path = Path("./documents.db"),
         vector_db_path: str | Path = Path("./embedding.faiss"),
     ) -> Self:
-        llm = LLM(model_path=Path(gen_model_path), model_params=llmsettings)
+        """
+        A higher level method to instantiate a RAG class.
+        """
+        llm = LLM(
+            llama_server_config.HOST_IP,
+            llama_server_config.GEN_PORT,
+            llm_config.TEMP,
+            llm_config.MAX_TOKENS,
+        )
+        embedding_model = EmbeddingModel(
+            llama_server_config.HOST_IP, llama_server_config.EMBED_PORT
+        )
         doc_db = SQLManager(db_path=Path(doc_db_path))
-        vector_db = FAISSManager(dimension=dimension, index_path=Path(vector_db_path))
-        ingestion_pipeline = IngestionPipeline.create()
+        vector_db = FAISSManager(
+            dimension=get_embedding_dim(embedding_model),
+            index_path=Path(vector_db_path),
+        )
+        ingestion_pipeline = IngestionPipeline(embedding_model)
 
         return cls(
             llm=llm,

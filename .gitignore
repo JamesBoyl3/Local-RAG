@@ -10,9 +10,6 @@ wheels/
 # Virtual environments
 .venv
 
-#Binaries ect.
-opt/
-
 # Sensitive Info
 *.env
 

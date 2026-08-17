@@ -7,6 +7,12 @@ wheels/
 *.egg-info
 *.log
 
+# Binaries
+opt/* 
+
+#Performance Metrics
+tests/performance/performance*
+
 # Virtual environments
 .venv
 
@@ -16,7 +22,6 @@ wheels/
 # Data stores
 *.db
 *.json
-*.db
 *.faiss
 *.sql
 

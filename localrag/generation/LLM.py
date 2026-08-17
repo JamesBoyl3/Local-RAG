@@ -4,9 +4,7 @@ import requests
 from pathlib import Path
 from typing import Generator
 
-from .config import LLMSettings, llmsettings
-from localrag.deploy import llama_server_settings
-from localrag.core import get_session
+from localrag.core import get_session, LLMConfig
 
 import logging
 
@@ -14,17 +12,21 @@ logger = logging.getLogger(__name__)
 
 
 class LLM:
-    def __init__(self, model_path: Path, *, model_params: LLMSettings) -> None:
-        self.settings = llmsettings
+    def __init__(self, host: str, port: int, config: LLMConfig) -> None:
+        self._host = host
+        self._port = port
+        self._temp = config.TEMP
+        self._max_tokens = config.MAX_TOKENS
+        # self._n_ctx = n_ctx
         self._session = get_session()
 
     def get_answer(self, conversation: list[dict[str, str]]) -> str:
         response = self._session.post(
-            f"http://{llama_server_settings.LLAMA_HOST}:{llama_server_settings.LLAMA_GEN_PORT}/v1/chat/completions",
+            f"http://{self._host}:{self._port}/v1/chat/completions",
             json={
                 "messages": conversation,
-                "temperature": self.settings.TEMP,
-                "max_tokens": self.settings.MAX_TOKENS,
+                "temperature": self._temp,
+                "max_tokens": self._max_tokens,
             },
             timeout=120,
         )
@@ -39,11 +41,11 @@ class LLM:
         logger.info(conversation)
 
         with self._session.post(
-            f"http://{llama_server_settings.LLAMA_HOST}:{llama_server_settings.LLAMA_GEN_PORT}/stream",
+            f"http://{self._host}:{self._port}/v1/chat/completions",
             json={
                 "messages": conversation,
-                "temperature": self.settings.TEMP,
-                "max_tokens": self.settings.MAX_TOKENS,
+                "temperature": self._temp,
+                "max_tokens": self._max_tokens,
             },
             stream=True,
             timeout=120,

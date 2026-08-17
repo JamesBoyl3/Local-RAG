@@ -1,9 +1,13 @@
 import logging
 from typing import Callable
 
+from localrag.ingestion import EmbeddingModel
+
+import numpy as np
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from functools import lru_cache
 
 logger = logging.getLogger(__name__)
 
@@ -60,3 +64,9 @@ def start_embedding_server() -> None:
     logger.warning(
         "start_embedding_server() is a stub. Use systemd to manage llama.cpp embedding server."
     )
+
+
+@lru_cache(maxsize=1)
+def get_embedding_dim(embedding_model: EmbeddingModel) -> int:
+    embedding = embedding_model.embed("a")  # dummy text,  only care about the shape
+    return embedding.shape[1]

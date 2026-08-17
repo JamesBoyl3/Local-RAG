@@ -7,9 +7,6 @@ wheels/
 *.egg-info
 *.log
 
-# Binaries
-opt/* 
-
 #Performance Metrics
 tests/performance/performance*
 

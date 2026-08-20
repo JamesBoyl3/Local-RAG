@@ -1,6 +1,6 @@
 # from locrag.services.rag_model import RAGModel
 
-from .core import settings, configure_logger
+from .core import get_settings, configure_logger, DocumentChunk
 from .rag import RAGModel
 from .generation import LLM
 from .ingestion import IngestionPipeline, EmbeddingModel

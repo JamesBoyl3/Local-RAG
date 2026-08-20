@@ -38,7 +38,7 @@ class LLM:
         self,
         conversation: list[dict[str, str]],
     ) -> Generator:
-        logger.info(conversation)
+        logger.info(conversation.messages[-3:])
 
         with self._session.post(
             f"http://{self._host}:{self._port}/v1/chat/completions",

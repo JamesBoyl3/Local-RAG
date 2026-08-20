@@ -2,7 +2,6 @@ from localrag.databases import DBManager, SQLManager, FAISSManager
 from localrag.generation import LLM
 from localrag.ingestion import IngestionPipeline, EmbeddingModel
 from localrag.core import Conversation, DocumentChunk, LLMConfig, LLamaServerConfig
-from localrag.core.llama_server import get_embedding_dim
 
 from pathlib import Path
 from typing import Generator, Self

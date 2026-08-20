@@ -1,4 +1,6 @@
 import numpy as np
+from functools import lru_cache
+
 
 from localrag.core.llama_server import get_session
 
@@ -34,3 +36,9 @@ class EmbeddingModel:
         normalized = stacked / norms
 
         return normalized
+
+    @lru_cache(maxsize=1)
+    def get_dim(self) -> int: 
+        test_text = "a"
+        test_embedding = self.embed(test_text)
+        return test_embedding[0]

@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import BaseModel
 from pathlib import Path
-
+from functools import lru_cache
 
 class LLMConfig(BaseModel):
     TEMP: float = 0.2
@@ -27,4 +27,6 @@ class Settings(BaseSettings):
     llama_server: LLamaServerConfig
 
 
-settings = Settings()  # type: ignore[arg-calls]
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    return Settings()  # type: ignore[call-arg]

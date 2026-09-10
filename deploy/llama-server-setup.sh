@@ -1,6 +1,8 @@
 #!/bin/bash
 
 set -eu
+
+source service-config.sh
  
 status() { printf "${1}\n" >&1; }
 warning() { printf "WARNING: ${1}\n" >&2; }

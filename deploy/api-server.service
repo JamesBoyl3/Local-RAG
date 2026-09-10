@@ -5,10 +5,9 @@ Wants=generative-server.service embedding-server.service
 
 [Service]
 Type=simple
-User=localrag
-WorkingDirectory=/opt/localrag
-Environment="PATH=/opt/localrag/.venv/bin"
-ExecStart=/opt/localrag/.venv/bin/uvicorn localrag.server:app --host 127.0.0.1 --port 8000
+User=${SERVICE_USER}
+
+ExecStart="${UVICORN_PATH}" "${API_PATH}"/app:app --host @HOST_IP@ --port @PORT@
 Restart=on-failure
 RestartSec=5
 

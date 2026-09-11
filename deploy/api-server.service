@@ -5,9 +5,9 @@ Wants=generative-server.service embedding-server.service
 
 [Service]
 Type=simple
-User=${SERVICE_USER}
+User=@SERVICE_USER@
 
-ExecStart="${UVICORN_PATH}" "${API_PATH}"/app:app --host @HOST_IP@ --port @PORT@
+ExecStart=@UVICORN_PATH@ @API_PATH@/main:app --host @HOST_IP@ --port @PORT@
 Restart=on-failure
 RestartSec=5
 

@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=${SERVICE_USER}
+User=@SERVICE_USER@
 
-ExecStart=/bin/bash -c 'exec ${LLAMA_CPP_BIN} -m ${LLAMA_EMBED_PATH} --host ${LLAMA_HOST} --port ${LLAMA_EMBED_PORT} --embedding'
+ExecStart=@BASH@ -c 'exec @LLAMA_SERVER@ -m @LLAMA_EPATH@ --host @LLAMA_HOST@ --port @LLAMA_EPORT@ --embedding'
 Restart=on-failure
 RestartSec=5
 

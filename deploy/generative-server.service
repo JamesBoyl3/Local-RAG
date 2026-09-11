@@ -4,9 +4,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=${SERVICE_USER}
+User=@SERVICE_USER@
 
-ExecStart=/bin/bash -c 'exec ${LLAMA_CPP_BIN} -m ${LLAMA_GEN_PATH} --host ${LLAMA_HOST} --port ${LLAMA_GEN_PORT}'
+ExecStart=@BASH@ -c 'exec @LLAMA_CPP_BIN@ -m @LLAMA_GPATH@ --host @LLAMA_HOST@ --port @LLAMA_GPORT@'
 Restart=on-failure
 RestartSec=5
 

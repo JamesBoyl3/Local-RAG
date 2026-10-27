@@ -13,7 +13,6 @@ from localrag.core import configure_logger, settings
 from localrag.core.llama_server import (
     check_generative_server,
     check_embedding_server,
-    get_embedding_dim,
 )
 
 logger = logging.getLogger(__name__)
@@ -57,10 +56,10 @@ async def lifespan(app: FastAPI):
         )
 
     rag_model = RAGModel.create(
-        gen_model_path=Path("./model.gguf"),
-        dimension=get_embedding_dim(
-            settings.llama_server.HOST_IP, settings.llama_server.EMBED_PORT
-        ),
+        llm_config=settings.llm,
+        llama_server_config=settings.llama_server,
+        doc_db_path=Path("/srv/documents"),
+        vector_db_path=Path("/srv/vectors"),
     )
     logger.info("RAG model initialized")
 
@@ -75,12 +74,12 @@ app = FastAPI(title="Local RAG API", lifespan=lifespan)
 @app.get("/health", response_model=HealthResponse)
 def health():
     gen_ok = check_generative_server(
-        llama_server_settings.HOST_IP,
-        llama_server_settings.LLAMA_GEN_PORT,
+        settings.llama_server.HOST_IP,
+        settings.llama_server.GEN_PORT,
     )
     emb_ok = check_embedding_server(
-        llama_server_settings.HOST_IP,
-        llama_server_settings.LLAMA_EMBED_PORT,
+        settings.llama_server.HOST_IP,
+        settings.llama_server.EMBED_PORT,
     )
     status = "ok" if gen_ok and emb_ok else "degraded"
     return HealthResponse(
@@ -126,8 +125,9 @@ def stream(request: QueryRequest):
 
     def generate():
         try:
-            for token in rag_model.stream_response(request.query):
-                yield token
+#            for token in rag_model.stream_response(request.query):
+#                yield token
+		 yield from rag_model.stream_response(request.query)
         except Exception as exc:
             logger.exception("Stream failed")
             yield f"\n[ERROR] {exc}"

@@ -1,8 +1,8 @@
-from localrag.core import DocumentChunk
-from localrag.databases.documentDBs import DocumentDB, SQLManager
-from localrag.databases.vectorDBs import VectorDB, FAISSManager
-
 import numpy as np
+
+from localrag.core import DocumentChunk
+from localrag.databases.documentDBs import DocumentDB
+from localrag.databases.vectorDBs import VectorDB
 
 
 class DBManager:

@@ -1,27 +1,33 @@
-from .schema import VectorDB
-
-from localrag.core import DocumentChunk
-
-from pathlib import Path
+# Interfaces
+# Logging
+import logging
 import os
 
+# File handling
+from pathlib import Path
+
+# Embedding Manipulation
 import faiss
 import numpy as np
 
-import logging
+from ..Documents.interfaces import DocumentChunk
+from .interfaces import EmbeddingDB
 
 logger = logging.getLogger(__name__)
 
 
-class FAISSManager(VectorDB):
-    """FAISS-backed vector store wrapper for retrieving document chunks."""
+class FAISSManager(EmbeddingDB):
+    """This class uses FAISS to implement the EmbeddingDB Protocol."""
 
-    def __init__(self, dimension: int, index_path: Path) -> None:
+    def __init__(self, dimension: int, index_path: Path | str) -> None:
         self.dimension = dimension
         self.index_path = str(index_path)
-        self.index = self._load_or_create_index()
+        self.index = self._load_or_create_index(str(index_path))
 
     def _load_or_create_index(self) -> faiss.IndexIDMap:
+        """
+        A
+        """
         if os.path.exists(Path(self.index_path)):
             index = faiss.read_index(self.index_path)
 
@@ -45,10 +51,14 @@ class FAISSManager(VectorDB):
     ) -> None:
         embeddings = [doc.embedding for doc in docs]
         embedding_ids = ids if ids is not None else list(range(len(docs)))
-        self.index.add_with_ids(
-            np.array(embeddings, dtype=np.float32),
-            np.array(embedding_ids, dtype=np.int64),
+
+        embeddings_arr = np.array(embeddings, dtype=np.float32)
+        ids_arr = np.array(embedding_ids, dtype=np.int64)
+        logger.info(
+            "embeddings shape: %s, ids shape: %s", embeddings_arr.shape, ids_arr.shape
         )
+
+        self.index.add_with_ids(embeddings_arr, ids_arr)
         self.save()
 
     def search(self, query_vector: np.ndarray, top_k: int = 4) -> list[int]:

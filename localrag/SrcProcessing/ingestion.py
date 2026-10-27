@@ -1,17 +1,14 @@
-from localrag.ingestion.Embeddings import EmbeddingModel
-from localrag.ingestion.Processors import (
-    PDFProcessor,
-    TextFileProcessor,
-    MarkdownProcessor,
-    WebProcessor,
-)
-from localrag.core import DocumentChunk
+import logging
 
 import numpy as np
 
-from pathlib import Path
-
-import logging
+from localrag.core import DocumentChunk
+from localrag.ingestion.Embeddings import EmbeddingModel
+from localrag.ingestion.Processors import (
+    MarkdownProcessor,
+    PDFProcessor,
+    TextFileProcessor,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +19,7 @@ class IngestionPipeline:
 
     def embed(self, content: str) -> np.ndarray:
         embedding = self.embedding_model.embed(content)
+        embedding = np.asarray(embedding, dtype=np.float32).reshape(-1)
         logger.info(f"Embedded {content[:50]}")
         return embedding
 

@@ -1,8 +1,8 @@
+import logging
+
 import numpy as np
 
 from localrag.core.llama_server import get_session
-
-import logging
 
 logger = logging.getLogger(__name__)
 

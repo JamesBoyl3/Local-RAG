@@ -1,7 +1,7 @@
-from localrag.core import DocumentChunk
-
 from abc import ABC, abstractmethod
 from typing import Self
+
+from localrag.core import DocumentChunk
 
 
 class DocumentDB(ABC):

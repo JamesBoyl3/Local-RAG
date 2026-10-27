@@ -1,6 +1,6 @@
-from localrag import settings, configure_logger, RAGModel
-
 import logging
+
+from localrag import RAGModel, configure_logger, settings
 
 if __name__ == "__main__":
     configure_logger(logging.DEBUG)

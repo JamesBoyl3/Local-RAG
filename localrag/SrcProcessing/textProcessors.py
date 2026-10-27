@@ -1,19 +1,15 @@
-from localrag.databases import SQLManager
-from localrag.core import DocumentChunk
-
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 
 import fitz
 import requests
 from bs4 import BeautifulSoup
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-import logging
+from localrag.core import DocumentChunk
 
 logger = logging.getLogger(__name__)
-
 
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 100

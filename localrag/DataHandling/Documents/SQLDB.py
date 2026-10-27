@@ -1,10 +1,9 @@
-from localrag.databases.documentDBs.schema import DocumentDB
-from localrag.core import DocumentChunk
-
-from pathlib import Path
-
 import sqlite3
+from pathlib import Path
 from typing import Self
+
+from localrag.core import DocumentChunk
+from localrag.databases.documentDBs.schema import DocumentDB
 
 
 class SQLManager(DocumentDB):

@@ -1,13 +1,9 @@
 import logging
-from typing import Callable
+from functools import lru_cache
 
-from localrag.ingestion import EmbeddingModel
-
-import numpy as np
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from functools import lru_cache
 
 logger = logging.getLogger(__name__)
 
@@ -16,35 +12,35 @@ def _server_url(host: str, port: int, path: str = "/v1/models") -> str:
     return f"http://{host}:{port}{path}"
 
 
-def check_generative_server(host: str, port: int, timeout: float = 5.0) -> bool:
-    url = _server_url(host, port)
+def check_generative_server(serverConfig: LLamaServerConfig) -> bool:
+    url = _server_url(serverConfig.HOST, serverConfig.GEN_PORT)
     try:
-        response = requests.get(url, timeout=timeout)
+        response = requests.get(url, timeout=serverConfig.TIMEOUT)
         response.raise_for_status()
-        logger.info("Generative server reachable at %s", url)
+        logger.info(f"Generative server reachable at {url}")
         return True
     except requests.RequestException as exc:
-        logger.error("Generative server unreachable at %s: %s", url, exc)
+        logger.error(f"Generative server unreachable at {url}: {exc}")
         return False
 
 
-def check_embedding_server(host: str, port: int, timeout: float = 5.0) -> bool:
-    url = _server_url(host, port)
+def check_embedding_server(serverConfig: LLamaServerConfig) -> bool:
+    url = _server_url(serverConfig.HOST, serverConfig.EMBED_PORT)
     try:
-        response = requests.get(url, timeout=timeout)
+        response = requests.get(url, timeout=serverConfig.TIMEOUT)
         response.raise_for_status()
-        logger.info("Embedding server reachable at %s", url)
+        logger.info("Embedding server reachable at {url}")
         return True
-    except requests.RequestException as exc:
-        logger.error("Embedding server unreachable at %s: %s", url, exc)
+    except requests.RequestException:
+        logger.error("Embedding server unreachable at {url}: {exc}")
         return False
 
 
-def get_session(retries: int = 3, backoff_factor: float = 1.0) -> requests.Session:
+def get_session(serverConfig: LLamaServerConfig) -> requests.Session:
     session = requests.Session()
     retry_strategy = Retry(
-        total=retries,
-        backoff_factor=backoff_factor,
+        total=serverConfig.RETRIES,
+        backoff_factor=LserverConfig.BACKOFF_FACTOR,
         status_forcelist=[429, 500, 502, 503, 504],
         allowed_methods=["HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS"],
     )
@@ -54,19 +50,14 @@ def get_session(retries: int = 3, backoff_factor: float = 1.0) -> requests.Sessi
     return session
 
 
-def start_generative_server() -> None:
-    logger.warning(
-        "start_generative_server() is a stub. Use systemd to manage llama.cpp generative server."
-    )
-
-
-def start_embedding_server() -> None:
-    logger.warning(
-        "start_embedding_server() is a stub. Use systemd to manage llama.cpp embedding server."
-    )
-
-
 @lru_cache(maxsize=1)
-def get_embedding_dim(embedding_model: EmbeddingModel) -> int:
-    embedding = embedding_model.embed("a")  # dummy text,  only care about the shape
-    return embedding.shape[1]
+def get_embedding_dim(serverConfig: LLamaServerConfig) -> int:
+    session = get_session()
+    response = session.post(
+        url=f"http://{serverConfig.HOST}:{serverConfig.EMBED_PORT}/v1/embeddings",
+        json={
+            "input": "a"
+        },  # Dummy Text. Only care about the embedding dim of the response
+        timeout=serverConfig.TIMEOUT,
+    ).json()
+    return len(response["data"][0]["embedding"])

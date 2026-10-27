@@ -1,30 +1,31 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from dataclasses import dataclass
+
 from pydantic import BaseModel
-from pathlib import Path
+
+
+@dataclass
+class Server:
+    host: str
+    ports: dict[str, int]
+
+    timeout: float = 5.0
+    retires: int = 3
+    backoff_factor: float = 1.0
+
+    def rag_addr(self) -> str:
+        return f"http://{self.host}:{self.ports.get('rag', 8000)}"
+
+    def gen_addr(self) -> str:
+        return f"http://{self.host}:{self.ports.get('gen', 8001)}"
+
+    def embed_addr(self) -> str:
+        return f"http://{self.host}:{self.ports.get('embed', 8002)}"
 
 
 class LLMConfig(BaseModel):
     TEMP: float = 0.2
     MAX_TOKENS: int = 1024
     N_CTX: int = 2048
-
-
-class LLamaServerConfig(BaseModel):
-    LLAMA_BIN_PATH: str
-    GEN_GGUF_PATH: str
-    EMBED_GGUF_PATH: str
-    HOST_IP: str = "127.0.0.1"
-    GEN_PORT: int = 8080
-    EMBED_PORT: int = 8081
-
-
-class Settings(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_file=".env", env_nested_delimiter="__", env_nested_max_split=1
-    )
-
-    llm: LLMConfig
-    llama_server: LLamaServerConfig
 
 
 settings = Settings()  # type: ignore[arg-calls]

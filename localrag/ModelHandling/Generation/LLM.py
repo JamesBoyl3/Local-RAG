@@ -1,12 +1,8 @@
 import json
-import requests
-
-from pathlib import Path
-from typing import Generator
-
-from localrag.core import get_session, LLMConfig
-
 import logging
+from collections.abc import Generator
+
+from localrag.core import LLMConfig, get_session
 
 logger = logging.getLogger(__name__)
 

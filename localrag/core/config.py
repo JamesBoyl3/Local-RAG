@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 @dataclass
-class Server:
+class ServerConfig:
     host: str
     ports: dict[str, int]
 
@@ -27,5 +27,4 @@ class LLMConfig(BaseModel):
     MAX_TOKENS: int = 1024
     N_CTX: int = 2048
 
-
-settings = Settings()  # type: ignore[arg-calls]
+testing_settings = ServerConfig(host="127.0.0.1", ports={"rag": 8888, "gen": 8889, "embed": 9000})

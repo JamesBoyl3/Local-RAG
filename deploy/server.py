@@ -9,7 +9,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from localrag import RAGModel
-from localrag.core import configure_logger, settings
+from localrag.core import configure_logger, testing_settings
 from localrag.core.llama_server import (
     check_generative_server,
     check_embedding_server,
@@ -39,6 +39,7 @@ rag_model: RAGModel | None = None
 async def lifespan(app: FastAPI):
     global rag_model
     configure_logger(logging.INFO)
+    settings = testing_settings
 
     gen_ok = check_generative_server(
         settings.llama_server.HOST_IP,
@@ -125,9 +126,9 @@ def stream(request: QueryRequest):
 
     def generate():
         try:
-#            for token in rag_model.stream_response(request.query):
-#                yield token
-		 yield from rag_model.stream_response(request.query)
+            #            for token in rag_model.stream_response(request.query):
+            #                yield token
+            yield from rag_model.stream_response(request.query)
         except Exception as exc:
             logger.exception("Stream failed")
             yield f"\n[ERROR] {exc}"
